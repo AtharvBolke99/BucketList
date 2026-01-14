@@ -78,7 +78,10 @@ app.post("/bucketlists", async (req, res) => {
 });
 
 app.get("/bucketlists", async (req, res) => {
-  const bucketlist = await BucketList.find();
+  const bucketlist = await BucketList.find().sort({
+    iscompleted: 1,
+    priority: -1,
+  });
   res.json({
     status: true,
     message: "bucket list items feteched successfully",
@@ -89,18 +92,16 @@ app.get("/bucketlists", async (req, res) => {
 app.patch("/bucketlists/:id/complete", async (req, res) => {
   const { id } = req.params;
 
-   await BucketList.updateOne({ _id: id }, { $set: { iscompleted: true } });
+  await BucketList.updateOne({ _id: id }, { $set: { iscompleted: true } });
 
-   const updatedBucketList = await BucketList.findOne({ _id: id });
+  const updatedBucketList = await BucketList.findOne({ _id: id });
 
-   return res.json( {
-    status : true,
-    message : "Bucket List updated succesfully",
-    data : updatedBucketList,
+  return res.json({
+    status: true,
+    message: "Bucket List updated succesfully",
+    data: updatedBucketList,
   });
 });
-
-
 
 app.listen(port, () => {
   console.log(`Server is running on the port ${port}`);
